@@ -32,3 +32,4 @@ OR
 flask shell
 ```
 
+Update to readme

@@ -4,7 +4,6 @@ import os
 
 # GitHub Webhook Secret (set this when you create the app in GitHub)
 GITHUB_SECRET = os.environ.get('GITHUB_SECRET')
-
 # Function to verify webhook signature
 def verifySignature(payloadBody, signature):
     # Create the expected signature

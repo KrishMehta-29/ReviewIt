@@ -26,9 +26,10 @@ def webhook():
             pull_request = payload['pull_request']
 
             reviewer = payload['requested_reviewer']
-            print(reviewer)
+            if reviewer["login"] != "Review-It-Bot":
+                return jsonify({'message': 'No need to add review for this reviewer'}), 200
 
-            # TODO: Here we got to add more info. Would ideally organize it a little better tbh but yeah for now. 
+            print(reviewer) 
 
 
             # Respond with a success message

@@ -111,4 +111,18 @@ def get_pull_request_diff(owner, repo, pr_number):
     
     return response.text  # The response will be a raw diff
 
-print(get_pull_request_diff("KrishMehta-29", "ReviewIt", 3))
+# diff = get_pull_request_diff("KrishMehta-29", "ReviewIt", 3)
+def push_comment_to_github(owner, repo, pr_number, comment):
+    token = get_installation_token()
+    
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github.v3+json",
+    }
+
+    url = f"{GITHUB_API_URL}/repos/{owner}/{repo}/issues/{pr_number}/comments"
+    response = requests.post(url, headers=headers, json={"body": comment})
+    response.raise_for_status()
+    
+    return response.json()
+

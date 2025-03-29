@@ -1,11 +1,11 @@
-from app.github.beans import PullRequest, Repo, PullRequestComment, PullRequestState
+from app.github.beans import PullRequest, Repo, PullRequestComment, PullRequestState, InlineComment
 from app.github import apis
 
 def getDiffForPR(pullRequest: PullRequest) -> str:
     return apis.getPullRequestDiff(pullRequest.repo, pullRequest.prNumber)
 
-def pushCommentToPR(pullRequest: PullRequest, comment: PullRequestComment) -> PullRequestComment: 
-    apis.pushCommentToGithub(pullRequest.repo, pullRequest.prNumber, comment.content)
+def createPRComment(pullRequest: PullRequest, comment: PullRequestComment) -> PullRequestComment: 
+    apis.createPRComment(pullRequest.repo, pullRequest.prNumber, comment.content)
 
 def _getBeanFromPRDict(repo: Repo, prDict: dict) -> PullRequest:
     return PullRequest(
@@ -23,5 +23,10 @@ def _getBeanFromRepoDict(repoDict: dict) -> Repo:
 def getPullRequestBeanFromDicts(repoDict: dict, prDict: dict) -> PullRequest:
     repoBean = _getBeanFromRepoDict(repoDict)
     return _getBeanFromPRDict(repoBean, prDict) 
+
+def createInlineComment(pullRequest: PullRequest, inlineComment: InlineComment) -> dict: 
+    return apis.createInlineComment(pullRequest=pullRequest, inlineComment=inlineComment)
+
+
 
 

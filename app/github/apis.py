@@ -1,6 +1,6 @@
 import app.github.auth as github_auth
 import requests
-from app.github.beans import Repo
+from app.github.beans import Repo, PullRequest, InlineComment
 from typing import Any, List, Dict
 
 GITHUB_API_URL = "https://api.github.com"
@@ -32,8 +32,7 @@ def getPullRequest(repo: Repo, prNumber: int) -> dict:
     
     return response.json()
 
-
-def pushCommentToGithub(repo: Repo, prNumber: int, comment: str) -> Dict[str, Any]:
+def createPRComment(repo: Repo, prNumber: int, comment: str) -> dict:
     headers = github_auth.getHeadersForRequest()
     url = f"{GITHUB_API_URL}/repos/{repo.owner}/{repo.name}/issues/{prNumber}/comments"
     response = requests.post(url, headers=headers, json={"body": comment})
@@ -41,16 +40,16 @@ def pushCommentToGithub(repo: Repo, prNumber: int, comment: str) -> Dict[str, An
     
     return response.json()
 
-def createInlineComment(owner, repo, prNumber, commitId, filePath, position, comment): 
+def createInlineComment(pullRequest: PullRequest, inlineComment: InlineComment) -> dict: 
     headers = github_auth.getHeadersForRequest()
 
     # Create an inline comment
-    url = f"{GITHUB_API_URL}/repos/{owner}/{repo}/pulls/{prNumber}/comments"
+    url = f"{GITHUB_API_URL}/repos/{pullRequest.repo.owner}/{pullRequest.repo.name}/pulls/{pullRequest.prNumber}/comments"
     payload = {
-        "body": comment,
-        "commit_id": commitId,
-        "path": filePath,
-        "position": position,  # Use position instead of line
+        "body": inlineComment.content,
+        "commit_id": pullRequest.headCommitSha,
+        "path": inlineComment.file,
+        "position": inlineComment.line,  # Use position instead of line
     }
 
     response = requests.post(url, headers=headers, json=payload)

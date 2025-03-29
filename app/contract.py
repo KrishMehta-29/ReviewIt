@@ -26,10 +26,11 @@ def handleWebhook(payload) -> bool:
         pullRequest = getPullRequestFromWebhook(payload)
         diff = github_contract.getDiffForPR(pullRequest)
 
-        # prComment = getAgentPRCommentsForDiff(diff=diff)
-        # comment = PullRequestComment(content=prComment)
-        # github_contract.createPRComment(pullRequest, comment)
+        prComment = getAgentPRCommentsForDiff(diff=diff)
+        comment = PullRequestComment(content=prComment)
+        github_contract.createPRComment(pullRequest, comment)
 
+        # This needs to be rather refined. But one step closer to the agent working inline.
         commentsToCreate = getAgentInlinePRCommentsForDiff(diff)
         for comment in commentsToCreate:
             github_contract.createInlineComment(pullRequest=pullRequest, inlineComment=comment)

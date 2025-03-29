@@ -1,9 +1,7 @@
 from flask import request, jsonify
 from . import github_bp  # Import the blueprint
 
-from app import auth
-from app.agentops_agent import getAICallFromDiff
-import asyncio
+from app import contract
 
 @github_bp.route('/')
 def index():
@@ -24,23 +22,10 @@ def webhook():
         payload = request.json
 
         # Handle the `review_requested` event
-        if payload.get('action') == 'review_requested':
-            pull_request = payload['pull_request']
+        handledWebhook = contract.handleWebhook(payload=payload)
 
-            reviewer = payload['requested_reviewer']
-            if reviewer["login"] != "Review-It-Bot":
-                return jsonify({'message': 'No need to add review for this reviewer'}), 200
-
-            prNumber = pull_request['number']
-
-            diff = auth.get_pull_request_diff("KrishMehta-29", "ReviewIt", prNumber)
-
-            result = asyncio.run(askAiAndPushCommentsToGithub(diff, "KrishMehta-29", "ReviewIt", prNumber))
+        if handledWebhook: 
             return jsonify({"message": "Comments added to PR"}), 200
         return jsonify({'message': 'Event not handled'}), 200
 
-async def askAiAndPushCommentsToGithub(diff, owner, repo, PrNumber):
-    res = await getAICallFromDiff(diff)
-    auth.push_comment_to_github(owner, repo, PrNumber, res)
-    return 
 

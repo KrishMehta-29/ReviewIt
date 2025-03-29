@@ -23,17 +23,14 @@ class PullRequest:
     
 class CommentProtocol(Protocol):
     content: str 
-    repo: Repo 
     
 @dataclass
 class PullRequestComment(CommentProtocol):
     content: str 
-    repo: Repo 
 
 @dataclass 
 class InlineComment(CommentProtocol): 
     content: str 
-    repo: Repo 
     line: int 
     file: str 
 
